@@ -1,0 +1,32 @@
+#head
+— All classes last 2 hours
+— Classes will be schedule from Monday to Friday
+— Each day has 4 blocks of 2 hour each
+— Blocks are numbered from 1 to 20 (5 days *4 blocks), Monday 9am to Friday 4pm 
+— In this dataset alll classes have 2 lessons per week
+
+#cc — courses assigned to classes (class, courses*)
+t01         UC11 UC12 UC13 UC14 UC15
+t02         UC21 UC22 UC23 UC24 UC25
+t03         UC31 UC32 UC33 UC34 UC35
+
+#olw — courses with just one lesson per week
+
+#dsd — courses assigned to lecturers (teacher, courses*)
+jo          UC11 UC21 UC22 UC31
+mike     UC12 UC23 UC32
+rob        UC13 UC14 UC24 UC33
+sue       UC15 UC25 UC34 UC35
+
+#tr — timeslot  restrictions (teacher, slots_unavailable*)
+mike   13 14 15 16 17 18 19 20
+rob      1 2 3 4
+sue      9 10 11 12 17 18 19 20
+
+#rr — room  restrictions (course, room)
+UC14   Lab01
+UC22   Lab01
+
+#oc — online classes (course, lesson_week_index)
+UC21   2
+UC31   2
