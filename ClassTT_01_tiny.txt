@@ -3,7 +3,7 @@
 — Classes will be schedule from Monday to Friday
 — Each day has 4 blocks of 2 hour each
 — Blocks are numbered from 1 to 20 (5 days *4 blocks), Monday 9am to Friday 4pm 
-— In this dataset alll classes have 2 lessons per week
+— In this dataset all classes have 2 lessons per week
 
 #cc — courses assigned to classes (class, courses*)
 t01         UC11 UC12 UC13 UC14 UC15
