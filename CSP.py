@@ -18,31 +18,48 @@ def load_dataset(path):
 
     section = None
     head, cc, dsd, tr, rr, oc = [], [], [], [], [], []
-    for ln in lines:
-        if not ln or ln.startswith("#head"):
-            section = "head"; continue if ln.startswith("#head") else None
-        if ln.startswith("#cc"):
-            section = "cc";   continue
-        if ln.startswith("#olw"):
-            section = "olw";  continue  # (não usado neste tiny; todas têm 2 aulas/semana)
-        if ln.startswith("#dsd"):
-            section = "dsd";  continue
-        if ln.startswith("#tr"):
-            section = "tr";   continue
-        if ln.startswith("#rr"):
-            section = "rr";   continue
-        if ln.startswith("#oc"):
-            section = "oc";   continue
 
+    for ln in lines:
+        # mudar de secção
+        if ln.startswith("#head"):
+            section = "head"
+            continue
+        if ln.startswith("#cc"):
+            section = "cc"
+            continue
+        if ln.startswith("#olw"):
+            section = "olw"  
+            continue
+        if ln.startswith("#dsd"):
+            section = "dsd"
+            continue
+        if ln.startswith("#tr"):
+            section = "tr"
+            continue
+        if ln.startswith("#rr"):
+            section = "rr"
+            continue
+        if ln.startswith("#oc"):
+            section = "oc"
+            continue
+
+        # ignorar comentários/linhas vazias
         if ln.startswith("#") or not ln.strip():
             continue
 
-        if section == "head": head.append(ln)
-        elif section == "cc": cc.append(ln)
-        elif section == "dsd": dsd.append(ln)
-        elif section == "tr": tr.append(ln)
-        elif section == "rr": rr.append(ln)
-        elif section == "oc": oc.append(ln)
+        # guardar linha na secção atual
+        if section == "head":
+            head.append(ln)
+        elif section == "cc":
+            cc.append(ln)
+        elif section == "dsd":
+            dsd.append(ln)
+        elif section == "tr":
+            tr.append(ln)
+        elif section == "rr":
+            rr.append(ln)
+        elif section == "oc":
+            oc.append(ln)
 
     return head, cc, dsd, tr, rr, oc
 
