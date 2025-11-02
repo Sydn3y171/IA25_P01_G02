@@ -9,7 +9,7 @@
 #   5) Exporta para CSV, PNG e PDF (cores por UC, hatch em aulas online)
 #   6) Coloca um banner docs/banner.png no topo dos PNG/PDF
 #
-#   Autor: Grupo I - António Ferreira, Mafalda Barão, Gonçalo Gomes, Ruben Dias, João Morais
+#   Alunos: Grupo II - António Ferreira, Mafalda Barão, Gonçalo Gomes, Ruben Dias, João Morais
 # =============================================================================
 
 # ---------- Importações ----------
