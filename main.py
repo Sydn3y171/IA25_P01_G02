@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # =============================================================================
 #  IA25_P01_G02 — Gerador de Horários com CSP (com exportação colorida + banner)
 #
@@ -8,39 +7,35 @@
 #   3) Constrói um CSP (python-constraint) e procura a 1.ª solução viável
 #   4) Mostra horários por turma e por docente
 #   5) Exporta para CSV, PNG e PDF (cores por UC, hatch em aulas online)
-#   6) Opcional: coloca um banner docs/banner.png no topo dos PNG/PDF
+#   6) Coloca um banner docs/banner.png no topo dos PNG/PDF
 #
-#  Como correr:
-#    pip install python-constraint pandas matplotlib
-#    python3 -u main.py
-#
-#   Autor: Grupo I - António Ferreira, Mafalda Barão, Gonçalo Gomes, Ruben Dias, João Moarais
+#   Autor: Grupo I - António Ferreira, Mafalda Barão, Gonçalo Gomes, Ruben Dias, João Morais
 # =============================================================================
 
-# ---------- Importações padrão ----------
+# ---------- Importações ----------
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import Dict, List, Tuple
 import re, pathlib, sys, time, platform, os, colorsys, hashlib
 
-# ---------- Terceiros ----------
-from constraint import Problem, MinConflictsSolver   # solver CSP
+
+from constraint import Problem, MinConflictsSolver  
 import pandas as pd
 import matplotlib.pyplot as plt
 
 
-# =========================
-# 1) CONFIGURAÇÃO GLOBAL
-# =========================
 
-DATA_PATH = "ClassTT_01_tiny.txt"  # ficheiro do dataset (ao lado do main.py)
+# 1) CONFIGURAÇÃO 
+
+
+DATA_PATH = "ClassTT_01_tiny.txt"  # ficheiro do dataset
 
 # Universo temporal: 5 dias * 4 blocos (2h cada) => 20 slots numerados 1..20
 DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"]
 BLOCKS_PER_DAY = 4
 SLOTS = list(range(1, 5 * BLOCKS_PER_DAY + 1))  # [1..20]
 
-# Etiquetas de blocos e janelas horárias (ajusta se precisares)
+# Tags de blocos e horários disponiveis
 BLOCK_LABELS = ["B1", "B2", "B3", "B4"]
 BLOCK_TO_TIME = {
     "B1": "09:00–11:00",
@@ -50,9 +45,9 @@ BLOCK_TO_TIME = {
 }
 
 
-# =========================
-# 2) FUNÇÕES UTILITÁRIAS
-# =========================
+
+# 2) FUNÇÕES 
+
 
 def slot_day(slot: int) -> str:
     """Converte slot (1..20) no dia ('Mon'..'Fri')."""
@@ -65,18 +60,13 @@ def slot_to_day_and_block(slot: int) -> Tuple[str, str]:
     return DAYS[day_idx], BLOCK_LABELS[block_idx]
 
 def read_section(raw: str, tag: str) -> List[str]:
-    """
-    Lê uma secção começada por '#tag' até à próxima '#'.
-    Retorna as linhas não vazias, já 'stripadas'.
-    """
     pat = re.compile(rf"#{tag}[^\n]*\n(.*?)(?=\n#|$)", re.S)
     m = pat.search(raw)
     return [] if not m else [ln.strip() for ln in m.group(1).strip().splitlines() if ln.strip()]
 
 
-# =========================
+
 # 3) LEITURA DO DATASET
-# =========================
 
 def load_dataset(path: str) -> Dict:
     """
@@ -147,9 +137,9 @@ def load_dataset(path: str) -> Dict:
     }
 
 
-# ===================================
-# 4) SANIDADE & DIAGNÓSTICO INICIAL
-# ===================================
+
+# 4) VALIDAÇÃO E DIAGNÓSTICO INICIAL
+
 
 def sanity_check_data(data: Dict) -> bool:
     """Verifica: UC tem turma/docente; slots de indisponibilidade estão em 1..20; salas obrigatórias válidas."""
@@ -202,7 +192,7 @@ def compute_var_infos(data: Dict, base_rooms=("SalaA","SalaB"), split_week=False
             bad = teacher_unav.get(teacher, set())
             valid_slots = [s for s in SLOTS if s not in bad]
 
-            # Split semana: _1 na 1.ª metade dos slots; _2 na 2.ª (quebra simetria)
+            # Split semana: 1 na 1.ª metade dos slots; 2 na 2.ª 
             if split_week:
                 mid = len(SLOTS) // 2
                 pivot = SLOTS[mid-1]
