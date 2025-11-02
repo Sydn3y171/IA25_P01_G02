@@ -205,7 +205,7 @@ def compute_var_infos(data: Dict, base_rooms=("SalaA","SalaB"), split_week=False
             mode = "online" if is_online else "presencial"
 
             if is_online:
-                rooms = [f"Online::{uc}"]   # não é uma sala física
+                rooms = [f"Online::{uc}"] 
             else:
                 rooms = [uc_room_req[uc]] if uc in uc_room_req else list(base_rooms)
 
@@ -223,7 +223,7 @@ def compute_var_infos(data: Dict, base_rooms=("SalaA","SalaB"), split_week=False
     return var_infos
 
 def print_dataset_snapshot(data: Dict) -> None:
-    """Resumo simples do dataset (útil para conferência rápida)."""
+    #Resumo simples do dataset
     print("\n[SNAPSHOT DATA]")
     print(" - UCs:", len(data["UCs"]))
     print(" - Turmas:", len(set(data["uc_to_class"].values())))
@@ -232,7 +232,7 @@ def print_dataset_snapshot(data: Dict) -> None:
         print(f"   Docente {t}: UCs={ucs} | indisponíveis={sorted(data['teacher_unavail'].get(t, set()))}")
 
 def run_diagnostics(data: Dict) -> None:
-    """Mostra domínios por variável e capacidade (slots livres ≥ nº aulas) por docente/turma."""
+    #Mostra domínios por variável e capacidade (slots livres ≥ nº aulas) por docente/turma.
     print_dataset_snapshot(data)
     var_infos = compute_var_infos(data)
 
@@ -272,21 +272,19 @@ def run_diagnostics(data: Dict) -> None:
     print("\n[FIM DIAGNÓSTICO]\n")
 
 
-# =========================
 # 5) CONSTRUÇÃO DO PROBLEMA
-# =========================
 
 def build_problem(
     data: Dict,
     enforce_online_same_day=True,   # se as 2 aulas de uma UC forem online, ficam no mesmo dia
     enforce_max3_per_day=True,      # máx. 3 aulas/dia por turma (hard)
-    enforce_order=True,             # quebra de simetria: UC_1 ocorre antes de UC_2
-    base_rooms=("SalaA", "SalaB"),  # salas base para presenciais (quando não há obrigatória)
+    enforce_order=True,             # UC_1 ocorre antes de UC_2
+    base_rooms=("SalaA", "SalaB"),  # salas defaut para presenciais
     split_week=False,               # UC_1 em 1.ª metade dos slots; UC_2 em 2.ª
     test_ignore_rooms=False,        # ignora colisões (slot,sala) nas presenciais
     test_ignore_max3=False          # ignora máx. 3/dia
 ):
-    """Constrói variáveis e restrições e devolve (problem, by_class, data)."""
+    #Constrói variáveis e restrições e devolve (problem, by_class, data)
 
     uc_to_class    = data["uc_to_class"]
     uc_to_teacher  = data["uc_to_teacher"]
@@ -356,8 +354,8 @@ def build_problem(
             print(f"\n[ERRO] Turma {c}: {len(vs)} aulas mas só {len(union)} slots livres.")
             return None, None, None
 
-    # --- Criar solver (Min-Conflicts muito rápido para 1.ª solução) ---
-    problem = Problem(MinConflictsSolver(steps=50000))  # steps = nº max de passos por tentativa
+    # --- Criar solver (Min-Conflicts rápido para 1.ª solução) ---
+    problem = Problem(MinConflictsSolver(steps=50000))  
 
     # MRV simples: adicionar variáveis por ordem crescente de tamanho do domínio
     var_infos.sort(key=lambda x: len(x["domain"]))
@@ -368,7 +366,7 @@ def build_problem(
             inperson_vars.append(vi["name"])
 
     # --- Restrições ---
-    # (A) Unicidade (slot, sala) nas presenciais
+    # (A) Unicidade do par (slot, sala) nas aulas presenciais
     def proj_slot_sala(*vals):
         return len({(s, r) for (s, r, m) in vals}) == len(vals)
     if inperson_vars and not test_ignore_rooms:
@@ -422,10 +420,7 @@ def build_problem(
 
     return problem, by_class, data
 
-
-# ============================================
 # 6) PROCURA COM ORÇAMENTO (timeout por camada)
-# ============================================
 
 def first_solution_with_deadline(problem: Problem, seconds: float):
     """
@@ -445,7 +440,7 @@ def try_solve_with_budget(data: Dict, total_seconds=90.0):
     O 'soft_max3' indica se a regra max3 foi tratada como suave nessa camada.
     """
     layers = [
-        ("DEBUG: sem hard sala/max3/online, com order+split",
+        ("DEBUG: sala/max3/online, com order+split",
          dict(enforce_online_same_day=False, enforce_max3_per_day=False, enforce_order=True,
               base_rooms=("SalaA","SalaB"), split_week=True,
               test_ignore_rooms=True, test_ignore_max3=True),
@@ -508,9 +503,9 @@ def try_solve_with_budget(data: Dict, total_seconds=90.0):
     return None, None, False
 
 
-# =============================
-# 7) SCORE & IMPRESSÃO LEGÍVEL
-# =============================
+
+# 7) SCORE E DISPLAY
+
 
 def score_solution(sol: Dict[str, Tuple[int,str,str]], by_class: Dict[str, List[str]], data: Dict, soft_max3=True) -> int:
     """
@@ -556,7 +551,7 @@ def score_solution(sol: Dict[str, Tuple[int,str,str]], by_class: Dict[str, List[
     return score
 
 def show_by_class(sol: Dict[str, Tuple[int,str,str]], by_class: Dict[str, List[str]]) -> None:
-    """Imprime horários por turma em formato humano."""
+    #Imprime horários por turma em formato humano.
     print("\n== HORÁRIO POR TURMA ==")
     for turma, tvars in by_class.items():
         print(f"\nTURMA {turma}")
@@ -571,7 +566,7 @@ def show_by_class(sol: Dict[str, Tuple[int,str,str]], by_class: Dict[str, List[s
                 print(d, "→", ", ".join([f"{s}: {uc} @{'ONLINE' if mode=='online' else room} ({mode})" for (s, uc, room, mode) in row]))
 
 def show_by_teacher(sol: Dict[str, Tuple[int,str,str]], data: Dict) -> None:
-    """Imprime horários por docente."""
+    #Imprime horários por docente.
     print("\n== HORÁRIO POR DOCENTE ==")
     uc_to_teacher = data["uc_to_teacher"]
     teacher_vars = defaultdict(list)
@@ -589,10 +584,7 @@ def show_by_teacher(sol: Dict[str, Tuple[int,str,str]], data: Dict) -> None:
             if row:
                 print(d, "→", ", ".join([f"{s}: {uc} @{'ONLINE' if mode=='online' else room} ({mode})" for (s, uc, room, mode) in row]))
 
-
-# =====================================
 # 8) EXPORTAÇÃO (CSV, PNG, PDF) COLORIDA
-# =====================================
 
 @dataclass
 class SlotEntry:
@@ -606,7 +598,7 @@ def build_calendar_frames(sol: Dict[str, Tuple[int,str,str]],
                           data: Dict) -> Dict[str, pd.DataFrame]:
     """
     Cria DataFrame por turma:
-      linhas = Mon..Fri ; colunas = B1..B4 ; célula = 'UC @Sala' ou 'UC @ONLINE (online)'
+      linhas = Mon..Fri ; colunas = B1..B4 ; bloco = 'UC @Sala' ou 'UC @ONLINE (online)'
     """
     frames: Dict[str, pd.DataFrame] = {}
     for turma, tvars in by_class.items():
@@ -621,17 +613,17 @@ def build_calendar_frames(sol: Dict[str, Tuple[int,str,str]],
         frames[turma] = df
     return frames
 
-# ---------- Cores por UC (determinísticas) ----------
+# ---------- Cores por UC ----------
 
 def uc_to_rgb(uc: str) -> Tuple[float,float,float]:
-    """Converte o nome da UC numa cor HSV → RGB estável (mesma UC = mesma cor)."""
+    #Converte o nome da UC numa cor HSV → RGB (mesma UC = mesma cor).
     h = int(hashlib.md5(uc.encode("utf-8")).hexdigest(), 16)
     hue = (h % 360) / 360.0
     sat, val = 0.45, 0.95
     return colorsys.hsv_to_rgb(hue, sat, val)
 
 def luminance(rgb: Tuple[float,float,float]) -> float:
-    """Luminância aproximada para decidir cor do texto (preto/branco)."""
+    #Validação da cor para colocar o texto
     r, g, b = rgb
     return 0.2126*r + 0.7152*g + 0.0722*b
 
@@ -639,7 +631,7 @@ def text_color_for_bg(rgb: Tuple[float,float,float]) -> str:
     """Preto em fundos claros; branco em fundos escuros."""
     return "black" if luminance(rgb) > 0.6 else "white"
 
-# ---------- Banner opcional no topo ----------
+# ---------- Banner no topo ----------
 def _try_load_banner(path="docs/banner.png"):
     """Tenta carregar docs/banner.png; se falhar, devolve None (sem quebrar export)."""
     try:
@@ -653,9 +645,9 @@ def _try_load_banner(path="docs/banner.png"):
 def _render_df_as_figure_colored(df: pd.DataFrame, title: str, figsize=(12, 6.2)):
     """
     Desenha a tabela (matplotlib) com:
-      - Banner no topo (se existir docs/banner.png)
+      - Banner no topo
       - Cabeçalhos com hora por bloco
-      - Células coloridas por UC; '///' hatch para aulas ONLINE
+      - Blocos coloridas por UC; '///' hatch para aulas ONLINE
     """
     import matplotlib.gridspec as gridspec
 
@@ -700,7 +692,7 @@ def _render_df_as_figure_colored(df: pd.DataFrame, title: str, figsize=(12, 6.2)
             cell.set_text_props(fontweight='bold')
             cell.set_facecolor((0.92, 0.92, 0.95))
 
-    # Pintar células por UC
+    # Pintar blocos por UC
     n_rows, n_cols = df.shape
     for ridx in range(n_rows):
         for cidx in range(n_cols):
@@ -710,26 +702,26 @@ def _render_df_as_figure_colored(df: pd.DataFrame, title: str, figsize=(12, 6.2)
                 cell.set_facecolor((1, 1, 1))
                 continue
 
-            parts = [p.strip() for p in txt.split("|")]  # proteção a múltiplas aulas na mesma célula
+            parts = [p.strip() for p in txt.split("|")]  # proteção a múltiplas aulas na mesma blocos
             if len(parts) == 1:
-                uc = parts[0].split()[0]           # primeira palavra
+                uc = parts[0].split()[0]           
                 bg = uc_to_rgb(uc)
                 cell.set_facecolor(bg)
                 cell.get_text().set_color(text_color_for_bg(bg))
                 if "@ONLINE" in parts[0]:
-                    cell.set_hatch("///")          # padrão visual para online
+                    cell.set_hatch("///")          
             else:
-                # Caso raro (não esperado): duas aulas na mesma célula
+                # Caso raro: duas aulas no mesmo bloco
                 cell.set_facecolor((0.85, 0.85, 0.85))
                 cell.get_text().set_color("black")
 
     fig.tight_layout()
     return fig
 
-# ---------- Exportadores ----------
+# ---------- Exportação ----------
 
 def export_csv(frames: Dict[str, pd.DataFrame], outdir: str) -> None:
-    """Exporta CSV por turma + CSV agregado (todas as turmas)."""
+    #Exporta CSV por turma + CSV agregado (todas as turmas).
     os.makedirs(outdir, exist_ok=True)
     for turma, df in frames.items():
         df.to_csv(os.path.join(outdir, f"horario_{turma}.csv"), encoding="utf-8")
@@ -749,7 +741,7 @@ def export_csv(frames: Dict[str, pd.DataFrame], outdir: str) -> None:
     pd.DataFrame(rows).to_csv(os.path.join(outdir, "horarios_todos.csv"), index=False, encoding="utf-8")
 
 def export_images(frames: Dict[str, pd.DataFrame], outdir: str) -> None:
-    """Exporta PNG colorido por turma (com banner opcional)."""
+    #Exporta PNG colorido por turma com banner.
     os.makedirs(outdir, exist_ok=True)
     for turma, df in frames.items():
         fig = _render_df_as_figure_colored(df, f"Horário {turma}")
@@ -757,7 +749,7 @@ def export_images(frames: Dict[str, pd.DataFrame], outdir: str) -> None:
         plt.close(fig)
 
 def export_pdfs(frames: Dict[str, pd.DataFrame], outdir: str) -> None:
-    """Exporta PDF colorido por turma (com banner opcional)."""
+    #Exporta PDF colorido por turma banner.
     os.makedirs(outdir, exist_ok=True)
     for turma, df in frames.items():
         fig = _render_df_as_figure_colored(df, f"Horário {turma}")
@@ -765,7 +757,7 @@ def export_pdfs(frames: Dict[str, pd.DataFrame], outdir: str) -> None:
         plt.close(fig)
 
 def export_all(sol, by_class, data, outdir="export") -> None:
-    """Pipeline completo de exportação."""
+    #Pipeline completo de exportação.
     frames = build_calendar_frames(sol, by_class, data)
     export_csv(frames, os.path.join(outdir, "csv"))
     export_images(frames, os.path.join(outdir, "img"))
@@ -775,9 +767,7 @@ def export_all(sol, by_class, data, outdir="export") -> None:
     print(f"[EXPORT] PDF → {os.path.join(outdir, 'pdf')}")
 
 
-# ============
 # 9) MAIN
-# ============
 
 def main():
     # 1) Ler dataset
@@ -787,7 +777,7 @@ def main():
         print(f"Erro: não encontrei '{DATA_PATH}'. Coloca o ficheiro ao lado do main.py.")
         sys.exit(1)
 
-    # 2) Sanidade mínima
+    # 2) Validação minima
     if not sanity_check_data(data):
         print("Erros de consistência no dataset. Corrige antes de continuar.")
         sys.exit(1)
@@ -808,7 +798,7 @@ def main():
         print(" - Se nem o debug/teste encontrar solução → conflito de indisponibilidades/carga ou dataset mal formado.")
         sys.exit(0)
 
-    # 5) Score + impressão legível
+    # 5) Score + Display
     sc = score_solution(sol, by_class, data, soft_max3=soft_max3)
     print("\n== SOLUÇÃO ENCONTRADA ==")
     print("Score (apenas indicativo):", sc)
@@ -820,6 +810,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # macOS: corre com -u para flush imediato dos prints
-    #   python3 -u main.py
     main()

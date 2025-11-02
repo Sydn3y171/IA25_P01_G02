@@ -4,7 +4,7 @@
 
 ![banner](docs/banner.png) 
 
-## ✨ Objetivo
+## Objetivo
 
 Criar um agente capaz de construir horários semanais válidos para várias turmas, respeitando:
 - **Restrições duras (hard)**: indisponibilidades de docentes, colisões de turma/docente, salas, número máximo de aulas por dia, etc.
@@ -14,7 +14,7 @@ Criar um agente capaz de construir horários semanais válidos para várias turm
 
 ---
 
-## 🧱 Restrições do Problema
+## Restrições do Problema
 
 **Hard**
 - Aulas com duração fixa (2h/bloco) e 4 blocos por dia (B1..B4).
@@ -33,7 +33,7 @@ Criar um agente capaz de construir horários semanais válidos para várias turm
 
 ---
 
-## 🧰 Tecnologias
+## Tecnologias
 
 - **Python 3.10+**
 - [python-constraint](https://pypi.org/project/python-constraint/) — modelação/solução CSP
@@ -42,7 +42,7 @@ Criar um agente capaz de construir horários semanais válidos para várias turm
 
 ---
 
-## 📦 Instalação
+## Instalação
 
 ### 1) Criar ambiente virtual
 
@@ -66,7 +66,7 @@ pip install python-constraint pandas matplotlib
 
 ---
 
-## ▶️ Como correr
+## Como correr
 
 Coloca o dataset `ClassTT_01_tiny.txt` ao lado do `main.py` e executa:
 
@@ -88,7 +88,7 @@ O programa:
 
 ---
 
-## 🗂️ Estrutura dos outputs
+## Estrutura dos outputs
 
 Após correr, encontras:
 
@@ -114,7 +114,7 @@ export/
 
 ---
 
-## 🧮 Como funciona (resumo técnico)
+## Como funciona
 
 - **Variáveis**: para cada UC existem duas variáveis `UC_1` e `UC_2`.  
 - **Domínios**: pares `(slot, sala, modo)` onde:
@@ -135,7 +135,7 @@ export/
 
 ---
 
-## 🧪 Dataset (exemplo mínimo)
+## Dataset (exemplo mínimo)
 
 ```
 #cc — classes → UCs
@@ -167,7 +167,7 @@ UC31        2
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 - **“Variáveis com domínio ZERO”**  
   → há UC com docente sem slots livres ou sala impossível. Revê `#tr` e `#rr`.
@@ -180,7 +180,7 @@ UC31        2
 
 ---
 
-## 📁 Organização sugerida do repo
+## Organização sugerida do repo
 
 ```
 .
@@ -194,17 +194,17 @@ UC31        2
 
 ---
 
-## 👥 Autores
+## Autores
 
-- Nome A (nº aluno)  
-- Nome B (nº aluno)  
-- Nome C (nº aluno)  
-- Nome D (nº aluno)  
-- Nome E (nº aluno)
+- António Ferreira 9657
+- Mafalda Barão 20446  
+- Gonçalo Gomes 23039
+- Rúben Dias 23033
+- João Morais 23041
 
 ---
 
-## 🚀 Comandos rápidos
+## Comandos rápidos
 
 ```bash
 # 1) Ambiente
