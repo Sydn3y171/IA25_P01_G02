@@ -1,6 +1,6 @@
 ,B1,B2,B3,B4
-Mon,,UC34 @SalaB,,UC35 @SalaB
-Tue,UC31 @SalaB,,UC34 @SalaA,UC33 @SalaA
-Wed,UC32 @SalaB,UC32 @SalaB,,UC33 @SalaB
-Thu,UC35 @SalaB,,UC31 @ONLINE (online),
-Fri,,,,
+Mon,UC35 @SalaA,,UC34 @SalaB,UC34 @SalaB
+Tue,UC32 @SalaB,,,UC32 @SalaA
+Wed,UC31 @SalaB,,,
+Thu,UC33 @SalaA,UC35 @SalaB,,
+Fri,,UC31 @ONLINE (online),UC33 @SalaA,

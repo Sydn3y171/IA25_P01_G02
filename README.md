@@ -2,7 +2,7 @@
 
 > Trabalho prático de Inteligência Artificial: geração automática de horários de aulas com **Constraint Satisfaction Problem (CSP)**.
 
-![banner](docs/banner.png) 
+![banner](docs/banner.png)
 
 ## ✨ Objetivo
 
