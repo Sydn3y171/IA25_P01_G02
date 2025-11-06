@@ -1,6 +1,6 @@
 ,B1,B2,B3,B4
-Mon,UC15 @SalaA,UC12 @SalaA,UC11 @SalaB,
-Tue,UC13 @SalaB,,,UC12 @SalaB
-Wed,,UC13 @SalaB,UC14 @Lab01,UC11 @SalaA
-Thu,,UC15 @SalaB,,
-Fri,UC14 @Lab01,,,
+Mon,,,UC11 @SalaB,
+Tue,,UC14 @Lab01,UC15 @SalaB,UC15 @SalaA
+Wed,UC13 @SalaB,UC12 @SalaB,UC13 @SalaB,UC12 @SalaB
+Thu,,,,UC14 @Lab01
+Fri,UC11 @SalaA,,,

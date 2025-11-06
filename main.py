@@ -12,7 +12,6 @@
 #   Alunos: Grupo II - António Ferreira, Mafalda Barão, Gonçalo Gomes, Ruben Dias, João Morais
 # =============================================================================
 
-# ---------- Importações ----------
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import Dict, List, Tuple
